@@ -4,6 +4,7 @@ package Models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  *
@@ -16,7 +17,8 @@ public class Empleados
     String apellido;
     String titulo;
     LocalDate fechaNacimiento;
-    LocalDateTime fechaContratacion;
+    LocalDate fechaContratacion;
+    String direccion;
     String ciudad;
     String codigoPostal;
     String telefono;
@@ -62,11 +64,11 @@ public class Empleados
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public LocalDateTime getFechaContratacion() {
+    public LocalDate getFechaContratacion() {
         return fechaContratacion;
     }
 
-    public void setFechaContratacion(LocalDateTime fechaContratacion) {
+    public void setFechaContratacion(LocalDate fechaContratacion) {
         this.fechaContratacion = fechaContratacion;
     }
 
@@ -102,5 +104,11 @@ public class Empleados
         this.extension = extension;
     }
     
-   
+   public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 }
