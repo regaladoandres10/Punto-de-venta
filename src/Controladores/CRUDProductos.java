@@ -56,8 +56,8 @@ public class CRUDProductos
         
         tableProducts.setModel(modelo);
         
-        sql = "SELECT idproducto, nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlamcen, unidadesEnOrden, nivelDeReorden FROM producto;";
-        
+        //sql = "SELECT idproducto, nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlamcen, unidadesEnOrden, nivelDeReorden FROM producto;";
+        sql = "SELECT * FROM producto";
         try
         {
             // Creando la conexion con la base de datos
@@ -99,7 +99,7 @@ public class CRUDProductos
         }
         catch(Exception e)
         {
-            JOptionPane.showMessageDialog(null,"Error al mostrar los usuarioss" + e.toString());
+            JOptionPane.showMessageDialog(null,"Error al mostrar los productos" + e.toString());
         }
         finally
         {
