@@ -33,7 +33,7 @@ public class Conexion
             Class.forName(driver);
             conectar = DriverManager.getConnection(cadenaConexion, user, password);
             //Verificar si la conexion se realiza correctamente
-            JOptionPane.showMessageDialog(null, "Conexion exitosa");
+            //JOptionPane.showMessageDialog(null, "Conexion exitosa");
         }
         catch(Exception e)
         {
@@ -50,7 +50,7 @@ public class Conexion
             if (conectar != null && !conectar.isClosed())
             {
                 conectar.close();
-                JOptionPane.showMessageDialog(null, "Conexion cerrada exitosamente");
+                //JOptionPane.showMessageDialog(null, "Conexion cerrada exitosamente");
             }
         }
         catch(SQLException e)
