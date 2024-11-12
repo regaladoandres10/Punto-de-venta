@@ -282,11 +282,6 @@ public class FormProductos extends javax.swing.JInternalFrame {
         productos.Seleccionar(tbProductos, txtIdProducto, txtNombre, txtCodigo, txtIdCategoria, txtCantidad, txtPrecio, txtUnidadAlmacen, txtUnidadesOrden, txtNivelReorden);
     }//GEN-LAST:event_tbProductosMouseClicked
 
-    private void tbProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbProductosMouseClicked
-        CRUDProductos productos = new CRUDProductos();
-        productos.Seleccionar(tbProductos, txtIdProducto, txtNombre, txtCodigo, txtIdCategoria, txtCantidad, txtPrecio, txtUnidadAlmacen, txtUnidadesOrden, txtNivelReorden);
-    }//GEN-LAST:event_tbProductosMouseClicked
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelProductos;
