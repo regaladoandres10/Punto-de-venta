@@ -93,7 +93,7 @@ public class CRUDEmpleados
                 objEmpleados.setCiudad(rs.getString("ciudad"));
                 objEmpleados.setCodigoPostal(rs.getString("codigoPostal"));
                 objEmpleados.setTelefono(rs.getString("telefono"));
-                objEmpleados.setExtension(rs.getString("extencion"));
+                objEmpleados.setExtension(rs.getString("extension"));
                 
                 
                 //Obtemos los valores 
@@ -139,7 +139,7 @@ public class CRUDEmpleados
 
         // Asegúrate de que `conexion` esté inicializada
         Connection con = conexion.conectar();
-        String consulta = "INSERT INTO empleado(nombre, apellido, titulo, fechaNacimiento, Contratacion, direccion, ciudad, codigoPostal, telefono, extencion) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String consulta = "INSERT INTO empleado(nombre, apellido, titulo, fechaNacimiento, Contratacion, direccion, ciudad, codigoPostal, telefono, extension) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         PreparedStatement ps = null;
         
@@ -251,7 +251,7 @@ public class CRUDEmpleados
         Empleados objEmpleados = new Empleados();
         
         Connection con = conexion.conectar();
-        String consulta = "UPDATE empleado SET nombre = ?, apellido = ?, titulo = ?, fechaNacimiento = ?, Contratacion = ?, direccion = ?, ciudad = ?, codigoPostal = ?, telefono = ?, extencion = ? WHERE idempleado = ?;";
+        String consulta = "UPDATE empleado SET nombre = ?, apellido = ?, titulo = ?, fechaNacimiento = ?, Contratacion = ?, direccion = ?, ciudad = ?, codigoPostal = ?, telefono = ?, extension = ? WHERE idempleado = ?;";
         
         try
         {

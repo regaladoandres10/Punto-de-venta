@@ -137,7 +137,7 @@ public class Main extends javax.swing.JFrame {
 
     private void jmVentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmVentaMouseClicked
         FormVentas objFormVentas = new FormVentas();
-        panelFormularios.add(objFormVentas);
+        dpFormulario.add(objFormVentas);
         objFormVentas.setVisible(true);
     }//GEN-LAST:event_jmVentaMouseClicked
 

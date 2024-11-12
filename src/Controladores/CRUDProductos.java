@@ -42,8 +42,7 @@ public class CRUDProductos
         DefaultTableModel modelo = new DefaultTableModel();
         
         String sql = "";
-<<<<<<< HEAD
-=======
+
         
         modelo.addColumn("IdProducto");
         modelo.addColumn("Nombre");
@@ -56,21 +55,6 @@ public class CRUDProductos
         modelo.addColumn("NivelDeReorden");
         //modelo.addColumn("Descontinuado"); 
         
-        tableProducts.setModel(modelo);
-        
-        sql = "SELECT idproducto, nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlmacen, unidadesEnOrden, nivelDeReorden FROM producto;";
->>>>>>> ec0aa70271d156142992720fcc02ea2f9a4c8e7e
-        
-        modelo.addColumn("IdProducto");
-        modelo.addColumn("Nombre");
-        modelo.addColumn("Codigo");
-        modelo.addColumn("idCategoria");
-        modelo.addColumn("CantidadPorUnidad");
-        modelo.addColumn("PrecioUnitario");
-        modelo.addColumn("UnidadesEnAlmacen");
-        modelo.addColumn("UnidadesEnOrden");
-        modelo.addColumn("NivelDeReorden");
-        //modelo.addColumn("Descontinuado"); 
         
         tableProducts.setModel(modelo);
         
@@ -140,8 +124,8 @@ public class CRUDProductos
 
         // Asegúrate de que `conexion` esté inicializada
         Connection con = conexion.conectar();
-        String consulta = "INSERT INTO producto(nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlmacen, unidadesEnOrden, nivelDeReorden, descontinuado) "
-                        + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, 0);";
+        String consulta = "INSERT INTO producto(nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlmacen, unidadesEnOrden, nivelDeReorden) "
+                        + "VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
 
         PreparedStatement ps = null;
 
@@ -237,7 +221,7 @@ public class CRUDProductos
         Productos objProducto = new Productos();
         
         Connection con = conexion.conectar();
-        String consulta = "UPDATE producto SET nombre = ?, codigo = ?, idcategoria = ?, cantidadPorUnidad = ?, precioUnitario = ?, unidadesEnAlmacen = ?, unidadesEnOrden = ?, nivelDeReorden = ?, descontinuado = 0 WHERE idproducto = ?;";
+        String consulta = "UPDATE producto SET nombre = ?, codigo = ?, idcategoria = ?, cantidadPorUnidad = ?, precioUnitario = ?, unidadesEnAlmacen = ?, unidadesEnOrden = ?, nivelDeReorden = ? WHERE idproducto = ?;";
         
         try
         {
