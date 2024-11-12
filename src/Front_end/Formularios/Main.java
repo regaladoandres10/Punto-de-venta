@@ -29,8 +29,10 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+
         back = new javax.swing.JPanel();
         dpFormulario = new javax.swing.JDesktopPane();
+
         jMenuBar1 = new javax.swing.JMenuBar();
         jmVenta = new javax.swing.JMenu();
         jmAdmin = new javax.swing.JMenu();
@@ -40,6 +42,7 @@ public class Main extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
 
         back.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -56,7 +59,18 @@ public class Main extends javax.swing.JFrame {
 
         back.add(dpFormulario, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1260, 700));
 
+
         jmVenta.setText("Venta");
+        jmVenta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jmVentaMouseClicked(evt);
+            }
+        });
+        jmVenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmVentaActionPerformed(evt);
+            }
+        });
         jMenuBar1.add(jmVenta);
 
         jmAdmin.setText("Administración");
@@ -92,6 +106,7 @@ public class Main extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(back, javax.swing.GroupLayout.PREFERRED_SIZE, 1257, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -102,6 +117,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(back, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+
         );
 
         pack();
@@ -118,6 +134,16 @@ public class Main extends javax.swing.JFrame {
         dpFormulario.add(objFormEmpleados);
         objFormEmpleados.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jmVentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmVentaMouseClicked
+        FormVentas objFormVentas = new FormVentas();
+        panelFormularios.add(objFormVentas);
+        objFormVentas.setVisible(true);
+    }//GEN-LAST:event_jmVentaMouseClicked
+
+    private void jmVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmVentaActionPerformed
+        
+    }//GEN-LAST:event_jmVentaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -155,8 +181,10 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+
     private javax.swing.JPanel back;
     private javax.swing.JDesktopPane dpFormulario;
+
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
