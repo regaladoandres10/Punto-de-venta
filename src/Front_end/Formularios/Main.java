@@ -6,6 +6,8 @@ package Front_end.Formularios;
 
 import Front_end.Formularios.FormEmpleados;
 import Front_end.Formularios.FormProductos;
+import java.awt.Color;
+import javax.swing.UIManager;
 
 /**
  *
@@ -18,6 +20,7 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
+       
     }
 
     /**
@@ -29,36 +32,38 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-        back = new javax.swing.JPanel();
         dpFormulario = new javax.swing.JDesktopPane();
-
+        Imagen = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jmVenta = new javax.swing.JMenu();
         jmAdmin = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jmReportes = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        dpFormulario.setBackground(new java.awt.Color(34, 32, 52));
+        dpFormulario.setDragMode(javax.swing.JDesktopPane.OUTLINE_DRAG_MODE);
 
-        back.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        Imagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/shopping-cart-43.png"))); // NOI18N
+        Imagen.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+
+        dpFormulario.setLayer(Imagen, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout dpFormularioLayout = new javax.swing.GroupLayout(dpFormulario);
         dpFormulario.setLayout(dpFormularioLayout);
         dpFormularioLayout.setHorizontalGroup(
             dpFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1260, Short.MAX_VALUE)
+            .addGroup(dpFormularioLayout.createSequentialGroup()
+                .addComponent(Imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 1591, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         dpFormularioLayout.setVerticalGroup(
             dpFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
+            .addComponent(Imagen, javax.swing.GroupLayout.PREFERRED_SIZE, 697, Short.MAX_VALUE)
         );
-
-        back.add(dpFormulario, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1260, 700));
-
 
         jmVenta.setText("Venta");
         jmVenta.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -95,8 +100,8 @@ public class Main extends javax.swing.JFrame {
 
         jmReportes.setText("Reportes");
 
-        jMenu3.setText("Buscar comprobante");
-        jmReportes.add(jMenu3);
+        jMenuItem3.setText("Buscar comprobante");
+        jmReportes.add(jMenuItem3);
 
         jMenuBar1.add(jmReportes);
 
@@ -106,18 +111,11 @@ public class Main extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(back, javax.swing.GroupLayout.PREFERRED_SIZE, 1257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(dpFormulario)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(back, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-
+            .addComponent(dpFormulario)
         );
 
         pack();
@@ -181,14 +179,12 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-
-    private javax.swing.JPanel back;
+    private javax.swing.JLabel Imagen;
     private javax.swing.JDesktopPane dpFormulario;
-
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenu jmAdmin;
     private javax.swing.JMenu jmReportes;
     private javax.swing.JMenu jmVenta;
