@@ -16,7 +16,6 @@ public class Productos
     int unidadesEnAlmacen;
     int unidadesEnOrden;
     int nivelDeReorden;
-    boolean descontinuado;
 
     public int getIdProducto() {
         return idProducto;
@@ -80,14 +79,6 @@ public class Productos
 
     public void setNivelDeReorden(int nivelDeReorden) {
         this.nivelDeReorden = nivelDeReorden;
-    }
-
-    public boolean isDescontinuado() {
-        return descontinuado;
-    }
-
-    public void setDescontinuado(boolean descontinuado) {
-        this.descontinuado = descontinuado;
     }
     
     public int getIdCategoria() {
