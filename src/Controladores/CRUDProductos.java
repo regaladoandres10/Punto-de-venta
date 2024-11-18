@@ -41,12 +41,28 @@ public class CRUDProductos
         //Creacion del objeto para utilizar la tabla
         DefaultTableModel modelo = new DefaultTableModel();
         
-        String sql = "SELECT * FROM producto;";
+        String sql = "";
+        
+        modelo.addColumn("IdProducto");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Codigo");
+        modelo.addColumn("idCategoria");
+        modelo.addColumn("CantidadPorUnidad");
+        modelo.addColumn("PrecioUnitario");
+        modelo.addColumn("UnidadesEnAlmacen");
+        modelo.addColumn("UnidadesEnOrden");
+        modelo.addColumn("NivelDeReorden");
+        //modelo.addColumn("Descontinuado"); 
+        
+        tableProducts.setModel(modelo);
+        
+        sql = "SELECT idproducto, nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlmacen, unidadesEnOrden, nivelDeReorden FROM producto;";
         
         try
         {
             // Creando la conexion con la base de datos
             Statement st = objConexion.conectar().createStatement();
+            
             //Ejecutamos la consulta
             ResultSet rs = st.executeQuery(sql);
             
@@ -61,10 +77,10 @@ public class CRUDProductos
                 objProducto.setIdCategoria(rs.getInt("idcategoria"));
                 objProducto.setCantidadPorUnidad(rs.getInt("cantidadPorUnidad"));
                 objProducto.setPrecioUnitario(rs.getDouble("precioUnitario"));
-                objProducto.setUnidadesEnAlmacen(rs.getInt("unidadesEnAlamcen"));
+                objProducto.setUnidadesEnAlmacen(rs.getInt("unidadesEnAlmacen"));
                 objProducto.setUnidadesEnOrden(rs.getInt("unidadesEnOrden"));
                 objProducto.setNivelDeReorden(rs.getInt("nivelDeReorden"));
-                objProducto.setDescontinuado(rs.getBoolean("descontinuado"));
+                //objProducto.setDescontinuado(rs.getBoolean("descontinuado"));
                 
                 //Obtemos los valores 
                 modelo.addRow(new Object[]{objProducto.getIdProducto(),
@@ -75,11 +91,11 @@ public class CRUDProductos
                                             objProducto.getPrecioUnitario(),
                                             objProducto.getUnidadesEnAlmacen(),
                                             objProducto.getCantidadPorUnidad(),
-                                            objProducto.getNivelDeReorden(),
-                                            objProducto.isDescontinuado()});
+                                            objProducto.getNivelDeReorden()});
             }
             
             tableProducts.setModel(modelo);
+            
         }
         catch(Exception e)
         {
@@ -89,21 +105,6 @@ public class CRUDProductos
         {
             objConexion.closeConexion();
         }
-        
-        //Ingresando las columnas dentro del jtable
-        
-        modelo.addColumn("IdProducto");
-        modelo.addColumn("Nombre");
-        modelo.addColumn("Codigo");
-        modelo.addColumn("idCategoria");
-        modelo.addColumn("CantidadPorUnidad");
-        modelo.addColumn("PrecioUnitario");
-        modelo.addColumn("UnidadesEnAlmacen");
-        modelo.addColumn("UnidadesEnOrden");
-        modelo.addColumn("NivelDeReorden");
-        modelo.addColumn("Descontinuado");        
-        
-        tableProducts.setModel(modelo);
         
     }
     
@@ -121,7 +122,7 @@ public class CRUDProductos
 
         // Asegúrate de que `conexion` esté inicializada
         Connection con = conexion.conectar();
-        String consulta = "INSERT INTO producto(nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlamcen, unidadesEnOrden, nivelDeReorden, descontinuado) "
+        String consulta = "INSERT INTO producto(nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlmacen, unidadesEnOrden, nivelDeReorden, descontinuado) "
                         + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, 0);";
 
         PreparedStatement ps = null;
@@ -168,6 +169,42 @@ public class CRUDProductos
         }
     }
     
+    public void Seleccionar(JTable tableProducts,
+                             JTextField id,
+                             JTextField nombre, 
+                             JTextField Codigo, 
+                             JTextField idCategoria, 
+                             JTextField CantidadPorUnidad,
+                             JTextField precio,
+                             JTextField unidadesAlmacen,
+                             JTextField unidadesOrden,
+                             JTextField nivel)
+    {
+        int fila = tableProducts.getSelectedRow();
+        
+        try
+        {
+            if(fila >= 0)
+            {
+                id.setText(tableProducts.getValueAt(fila, 0).toString());
+                nombre.setText(tableProducts.getValueAt(fila, 1).toString());
+                Codigo.setText(tableProducts.getValueAt(fila, 2).toString());
+                idCategoria.setText(tableProducts.getValueAt(fila, 3).toString());
+                CantidadPorUnidad.setText(tableProducts.getValueAt(fila, 4).toString());
+                precio.setText(tableProducts.getValueAt(fila, 5).toString());
+                unidadesAlmacen.setText(tableProducts.getValueAt(fila, 6).toString());
+                unidadesOrden.setText(tableProducts.getValueAt(fila, 7).toString());
+                nivel.setText(tableProducts.getValueAt(fila, 8).toString());
+            }
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Error al seleccionar: " + e.toString());
+        }
+       
+        
+    }
+    
     public void modificarProductos(JTextField id,
                              JTextField nombre, 
                              JTextField Codigo, 
@@ -182,7 +219,7 @@ public class CRUDProductos
         Productos objProducto = new Productos();
         
         Connection con = conexion.conectar();
-        String consulta = "UPDATE producto SET nombre = ?, codigo = ?, idcategoria = ?, cantidadPorUnidad = ?, precioUnitario = ?, unidadesEnAlamcen = ?, unidadesEnOrden = ?, nivelDeReorden = ?, descontinuado = 0 WHERE idproducto = ?;";
+        String consulta = "UPDATE producto SET nombre = ?, codigo = ?, idcategoria = ?, cantidadPorUnidad = ?, precioUnitario = ?, unidadesEnAlmacen = ?, unidadesEnOrden = ?, nivelDeReorden = ?, descontinuado = 0 WHERE idproducto = ?;";
         
         try
         {

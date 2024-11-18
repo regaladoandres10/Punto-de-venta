@@ -205,6 +205,11 @@ public class FormProductos extends javax.swing.JInternalFrame {
 
             }
         ));
+        tbProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbProductosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbProductos);
 
         back.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 1040, 220));
@@ -276,10 +281,17 @@ public class FormProductos extends javax.swing.JInternalFrame {
         CRUDProductos productos = new CRUDProductos();
         try {
             productos.borrarProductos(txtIdProducto);
+            productos.mostrarProductos(tbProductos);
+            productos.limpiarCampos(txtIdProducto, txtNombre, txtCodigo, txtIdCategoria, txtCantidad, txtPrecio, txtUnidadAlmacen, txtUnidadesOrden, txtNivelReorden);
         } catch (SQLException ex) {
             Logger.getLogger(FormProductos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void tbProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbProductosMouseClicked
+        CRUDProductos productos = new CRUDProductos();
+        productos.Seleccionar(tbProductos, txtIdProducto, txtNombre, txtCodigo, txtIdCategoria, txtCantidad, txtPrecio, txtUnidadAlmacen, txtUnidadesOrden, txtNivelReorden);
+    }//GEN-LAST:event_tbProductosMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
