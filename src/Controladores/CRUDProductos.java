@@ -22,6 +22,9 @@ public class CRUDProductos
 {
     Conexion conexion;
     PreparedStatement ps;
+    PreparedStatement tr = null;
+    PreparedStatement com = null;
+    PreparedStatement rll = null;
     ResultSet rs;
     
     public CRUDProductos()
@@ -124,9 +127,12 @@ public class CRUDProductos
 
         // Asegúrate de que `conexion` esté inicializada
         Connection con = conexion.conectar();
+        String transaccion = "START TRANSACTION;";
         String consulta = "INSERT INTO producto(nombre, codigo, idcategoria, cantidadPorUnidad, precioUnitario, unidadesEnAlmacen, unidadesEnOrden, nivelDeReorden) "
                         + "VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
-
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
+        
         PreparedStatement ps = null;
 
         try 
@@ -154,16 +160,22 @@ public class CRUDProductos
             ps.setInt(7, objProductos.getUnidadesEnOrden());
             ps.setInt(8, objProductos.getNivelDeReorden());
             //ps.setBoolean(9, objProductos.isDescontinuado());
-
+            
+            tr = con.prepareStatement(transaccion);
+            com = con.prepareStatement(comm);
+            rll = con.prepareStatement(roll);
+            
             // Ejecuta la inserción
+            tr.execute();
             ps.executeUpdate();
-
+            com.execute();
             JOptionPane.showMessageDialog(null, "Se guardó correctamente");
 
         }
         catch(Exception e) 
         {
             JOptionPane.showMessageDialog(null, "Error al guardar: " + e.toString());
+            rll.execute();
         } finally 
         {
             if (ps != null) ps.close();
@@ -221,7 +233,11 @@ public class CRUDProductos
         Productos objProducto = new Productos();
         
         Connection con = conexion.conectar();
+        
+        String transaccion = "START TRANSACTION;";
         String consulta = "UPDATE producto SET nombre = ?, codigo = ?, idcategoria = ?, cantidadPorUnidad = ?, precioUnitario = ?, unidadesEnAlmacen = ?, unidadesEnOrden = ?, nivelDeReorden = ? WHERE idproducto = ?;";
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
         
         try
         {
@@ -248,15 +264,22 @@ public class CRUDProductos
             ps.setInt(8, objProducto.getNivelDeReorden());
             ps.setInt(9, objProducto.getIdProducto());
             //ps.setBoolean(9, objProductos.isDescontinuado());
+            tr = con.prepareStatement(transaccion);
+            com = con.prepareStatement(comm);
+            rll = con.prepareStatement(roll);
 
             // Ejecuta la inserción
+            tr.execute();
             ps.executeUpdate();
+            com.execute();
+            
             
             JOptionPane.showMessageDialog(null, "Producto modificado con exito");
         }
         catch(Exception e)
         {
             JOptionPane.showMessageDialog(null, "Error al modificar producto: " + e.toString());
+            rll.execute();
         }
         finally
         {
@@ -292,7 +315,10 @@ public class CRUDProductos
         Productos objProducto = new Productos();
         
         Connection con = conexion.conectar();
+        String transaccion = "START TRANSACTION;";
         String consulta = "DELETE FROM producto WHERE idproducto = ?;";
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
         
         try
         {
@@ -303,15 +329,21 @@ public class CRUDProductos
 
             ps.setInt(1, objProducto.getIdProducto());
             
+            tr = con.prepareStatement(transaccion);
+            com = con.prepareStatement(comm);
+            rll = con.prepareStatement(roll);
 
             // Ejecuta la inserción
+            tr.execute();
             ps.executeUpdate();
+            com.execute();
             
             JOptionPane.showMessageDialog(null, "Producto borrado con exito");
         }
         catch(Exception e)
         {
             JOptionPane.showMessageDialog(null, "No se elimino correctamemte error " + e.toString());
+            rll.execute();
         }
         finally
         {
