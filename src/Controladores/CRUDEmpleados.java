@@ -29,6 +29,9 @@ public class CRUDEmpleados
 {
     Conexion conexion;
     PreparedStatement ps;
+    PreparedStatement tr = null;
+    PreparedStatement com = null;
+    PreparedStatement rll = null;
     ResultSet rs;
     
     public CRUDEmpleados()
@@ -139,9 +142,14 @@ public class CRUDEmpleados
 
         // Asegúrate de que `conexion` esté inicializada
         Connection con = conexion.conectar();
+        String transaccion = "START TRANSACTION;";
         String consulta = "INSERT INTO empleado(nombre, apellido, titulo, fechaNacimiento, Contratacion, direccion, ciudad, codigoPostal, telefono, extension) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-
-        PreparedStatement ps = null;
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
+        
+        ps = null;
+        
+        
         
         try 
         {  
@@ -178,15 +186,21 @@ public class CRUDEmpleados
             ps.setString(9, objEmpleados.getTelefono());
             ps.setString(10, objEmpleados.getExtension());
             
-
+            tr = con.prepareStatement(transaccion);
+            com = con.prepareStatement(comm);
+            rll = con.prepareStatement(roll);
+            
             // Ejecuta la inserción
+            tr.execute();
             ps.executeUpdate();
-
+            com.execute();
+            
             JOptionPane.showMessageDialog(null, "Se guardó correctamente el empleado.");
 
         }
         catch(Exception e) 
         {
+            rll.execute();
             JOptionPane.showMessageDialog(null, "Error al guardar el empleado: " + e.toString());
         } finally 
         {
@@ -251,7 +265,10 @@ public class CRUDEmpleados
         Empleados objEmpleados = new Empleados();
         
         Connection con = conexion.conectar();
+        String transaccion = "START TRANSACTION;";
         String consulta = "UPDATE empleado SET nombre = ?, apellido = ?, titulo = ?, fechaNacimiento = ?, Contratacion = ?, direccion = ?, ciudad = ?, codigoPostal = ?, telefono = ?, extension = ? WHERE idempleado = ?;";
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
         
         try
         {
@@ -287,15 +304,22 @@ public class CRUDEmpleados
             ps.setString(9, objEmpleados.getTelefono());
             ps.setString(10, objEmpleados.getExtension());
             ps.setInt(11, objEmpleados.getIdEmpleado());
+            
+            tr = con.prepareStatement(transaccion);
+            com = con.prepareStatement(comm);
+            rll = con.prepareStatement(roll);
 
             // Ejecuta la inserción
+            tr.execute();
             ps.executeUpdate();
+            com.execute();
             
             JOptionPane.showMessageDialog(null, "Empleado modificado con exito");
         }
         catch(Exception e)
         {
             JOptionPane.showMessageDialog(null, "Error al modificar el empleado: " + e.toString());
+            rll.execute();
         }
         finally
         {
@@ -335,7 +359,10 @@ public class CRUDEmpleados
         Empleados objEmpleados = new Empleados();
         
         Connection con = conexion.conectar();
+        String transaccion = "START TRANSACTION;";
         String consulta = "DELETE FROM empleado WHERE idEmpleado = ?;";
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
         
         try
         {
@@ -345,16 +372,22 @@ public class CRUDEmpleados
             ps = con.prepareStatement(consulta);
 
             ps.setInt(1, objEmpleados.getIdEmpleado());
+            tr = con.prepareStatement(transaccion);
+            com = con.prepareStatement(comm);
+            rll = con.prepareStatement(roll);
             
 
             // Ejecuta la inserción
+            tr.execute();
             ps.executeUpdate();
+            com.execute();
             
             JOptionPane.showMessageDialog(null, "Empleado borrado exitosamente");
         }
         catch(Exception e)
         {
             JOptionPane.showMessageDialog(null, "No se elimino correctamemte el empleado: " + e.toString());
+            rll.execute();
         }
         finally
         {

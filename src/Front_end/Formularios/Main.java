@@ -6,8 +6,6 @@ package Front_end.Formularios;
 
 import Front_end.Formularios.FormEmpleados;
 import Front_end.Formularios.FormProductos;
-import java.awt.Color;
-import javax.swing.UIManager;
 
 /**
  *
@@ -100,7 +98,12 @@ public class Main extends javax.swing.JFrame {
 
         jmReportes.setText("Reportes");
 
-        jMenuItem3.setText("Buscar comprobante");
+        jMenuItem3.setText("Generar Reporte");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jmReportes.add(jMenuItem3);
 
         jMenuBar1.add(jmReportes);
@@ -125,6 +128,7 @@ public class Main extends javax.swing.JFrame {
         FormProductos objFormProductos = new FormProductos();
         dpFormulario.add(objFormProductos);
         objFormProductos.setVisible(true);
+        
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -142,6 +146,12 @@ public class Main extends javax.swing.JFrame {
     private void jmVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmVentaActionPerformed
         
     }//GEN-LAST:event_jmVentaActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        GenerarReporteView act = new GenerarReporteView();
+        act.setVisible(true);
+
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments

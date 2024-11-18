@@ -4,10 +4,17 @@
  */
 package Controladores;
 
+import java.awt.Desktop;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -146,24 +153,36 @@ public class ControladorVenta {
         IVA.setText(String.valueOf(totalIva));
     }
     
-    public void hacerVenta(JTable tablaResumen, JLabel total){
+    public void hacerVenta(JTable tablaResumen, JLabel total) throws SQLException{
     
         Conexion.Conexion objetoConexion = new Conexion.Conexion();
+        String transaccion = "START TRANSACTION;";
+        
         String venta = "insert into venta (idEmpleado,fecha,total) values(1,now(),?);";
         String consulta = "insert into detallesVenta(precioUnitario,cantidad,codigo,idorden)values (?,?,?,(select MAX(idorden) from venta));";
         String consultaStock = "UPDATE producto set producto.unidadesEnAlmacen = unidadesEnAlmacen - ? where producto.codigo= ?;";
+        
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
         
         try {
             PreparedStatement psDetalle = objetoConexion.conectar().prepareCall(consulta);
             PreparedStatement psStock = objetoConexion.conectar().prepareStatement(consultaStock);
             CallableStatement psVenta = objetoConexion.conectar().prepareCall(venta);
+            PreparedStatement tr = objetoConexion.conectar().prepareStatement(transaccion);
+            PreparedStatement com = objetoConexion.conectar().prepareStatement(comm);
+            
             
             int filas = tablaResumen.getRowCount();
             
+            tr.execute();
+            psVenta.setDouble(1,Double.parseDouble(total.getText()));
+            psVenta.execute();
+            com.execute();
+            
             for (int i = 0; i < filas; i++) {
                 
-                psVenta.setDouble(1,Double.parseDouble(total.getText()));
-                psVenta.execute();
+                
                 
                 
                 String codigo1 = tablaResumen.getValueAt(i, 0).toString();
@@ -179,14 +198,19 @@ public class ControladorVenta {
                 
                 psStock.setInt(1,cantidad);
                 psStock.setString(2, codigo1);
-                psStock.executeUpdate();
+                
+                tr.execute();
+                psStock.execute();
+                com.execute();
+                
                 
             }
             
             JOptionPane.showMessageDialog(null, "La compra se ha realizado con exito");
         } catch (Exception e) {
-            
+            PreparedStatement rll = objetoConexion.conectar().prepareStatement(roll);
             JOptionPane.showMessageDialog(null, "Eror al realizar la venta "+e.toString());
+            rll.execute();
         } finally {
             
             objetoConexion.closeConexion();
@@ -211,6 +235,78 @@ public class ControladorVenta {
         
         DefaultTableModel modeloResumen = (DefaultTableModel) tablaResumen.getModel();
         modeloResumen.setRowCount(0);
+        
+    }
+    
+    public void generarTicket(JTable jTable2,JLabel lblTOTAL, JLabel lbllVA, int idEmpleado) throws IOException{
+        
+        String nombreArchivo = "ticket_" + System.currentTimeMillis() + ".txt"; 
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo))){
+            String[]empleado=obtenerEmpleado(idEmpleado);
+            String nombreEmpleado=empleado[0];
+            String apellidoEmpleado=empleado[1];
+            String fechaHoy = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+      
+        writer.write("===================================================================\n");
+        writer.write("                         *** TICKET DE COMPRA ***\n");                         
+        writer.write("===================================================================\n\n");
+        writer.write("Fecha: " + fechaHoy + "\n");
+        writer.write("Empleado: " + nombreEmpleado + " " + apellidoEmpleado + "\n\n");
+        writer.write("Productos:\n");
+            DefaultTableModel model=(DefaultTableModel) jTable2.getModel();
+            for(int i=0; i < model.getRowCount();i++){
+                String codigo=model.getValueAt(i, 0).toString();
+                String nombre=model.getValueAt(i, 1).toString();
+                String precio=model.getValueAt(i, 2).toString();
+                String cantidad=model.getValueAt(i, 3).toString();
+                String subtotal=model.getValueAt(i, 4).toString();
+                
+                writer.write("-"+nombre+"   "+"-Cantidad:"+cantidad+"   "+"-Precio: $"+precio+"   "+"- subtotal: $"+subtotal+"\n");
+               
+            }
+            
+            writer.write("\nIVA (16%):$"+lbllVA.getText()+"\n");
+            writer.write("Total:$"+lblTOTAL.getText()+"\n");
+           
+            
+            writer.write("===================================================================\n");
+            writer.write("                   ¡Gracias por su preferencia!      \n");
+            writer.write("===================================================================\n");
+
+          
+               
+            System.out.println("El ticket ha sido generado en " + nombreArchivo);
+              
+        File archivo = new File(nombreArchivo);
+        if (archivo.exists()) {
+            
+            Desktop.getDesktop().open(archivo);
+        }
+    } catch (IOException e) {
+        System.err.println("Error al generar el ticket: " + e.getMessage());
+    }
+         
+    }
+    
+    private String[] obtenerEmpleado(int idEmpleado){
+        String[] empleado = new String[2];
+        Conexion.Conexion objetoConexion =new Conexion.Conexion();
+        try{
+            String consulta= "SELECT nombre,apellido FROM Empleado WHERE idempleado= ?";
+            PreparedStatement ps = objetoConexion.conectar().prepareStatement(consulta);
+            ps.setInt(1, idEmpleado);
+            ResultSet rs=ps.executeQuery();
+            if(rs.next()){
+               empleado[0] = rs.getString("nombre");
+               empleado[1] = rs.getString("apellido");  
+            }
+        
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null,"Error al obtener empleados"+ e.toString());
+        } finally {
+        objetoConexion.closeConexion();
+    } return empleado;
         
     }
 }

@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -632,9 +633,17 @@ public class FormVentas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnEliminarVentaMouseExited
 
     private void btnCobrarProductoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCobrarProductoMouseClicked
+        try{
         Controladores.ControladorVenta objetoVenta = new ControladorVenta();
         objetoVenta.hacerVenta(tableVentas, lblTOTAL);
+        objetoVenta.generarTicket(tableVentas, lblTOTAL, lblIVA, HIDE_ON_CLOSE);
         objetoVenta.limpliar(txtSCodigo, tbProductos, txtSCodigo, txtSNombre, txtSPrecio, txtSStock, txtPrecioVenta, txtCantidad, tableVentas, lblIVA, lblTOTAL);
+        
+        }catch(SQLException s){
+            System.out.println(s.getMessage());
+        } catch (IOException ex) {
+            Logger.getLogger(FormVentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnCobrarProductoMouseClicked
 
     private void btnCobrarProductoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCobrarProductoMouseEntered
