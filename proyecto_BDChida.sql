@@ -1,7 +1,12 @@
 CREATE DATABASE puntoVenta;
 USE puntoVenta;
 
-CREATE TABLE login(
+CREATE USER 'Admin'@'localhost' identified BY '1234';
+
+GRANT SELECT, UPDATE, DELETE, INSERT ON puntoVenta.* TO 'Admin'@'localhost';
+
+CREATE TABLE login
+(
 	id INT NOT NULL PRIMARY KEY auto_increment,
     user VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL
@@ -54,7 +59,6 @@ CREATE TABLE venta (
     total DECIMAL(19,4)
     
 );
-
 -- Ahora puedes crear la tabla 'detallesVenta' sin problemas
 CREATE TABLE detallesVenta (
     precioUnitario DECIMAL(19,4),
@@ -64,6 +68,94 @@ CREATE TABLE detallesVenta (
     idorden INT NOT NULL,
     FOREIGN KEY (idorden) REFERENCES venta(idorden)
 );
+
+CREATE TABLE clientes(
+	idCliente INT NOT NULL primary key auto_increment,
+    nombreCompañia VARCHAR(50) NOT NULL,
+    nombreContacto VARCHAR(40),
+    tituloContacto VARCHAR(40),
+    direccion VARCHAR(60),
+    ciudad VARCHAR(30) NOT NULL,
+    codigoPostal VARCHAR(10) NOT NULL,
+    pais VARCHAR(30),
+    telefono VARCHAR(10)
+);
+
+INSERT INTO clientes(nombreCompañia, nombreContacto, tituloContacto, direccion, ciudad, codigoPostal, pais, telefono)VALUES("Soriana", "Juan Perez", "Jefe", "Main Street 1234", "Uriangato", "34980", "Mexico", "4421232312");
+SELECT * FROM clientes;
+
+UPDATE clientes SET nombreCompañia = "Bodega", nombreContacto = "Maria", tituloContacto = "Gerente", direccion = "Main Street 20", ciudad = "Moroleon", codigoPostal = "38987", pais = "El Salvador", telefono = "2321231232" WHERE idCliente = 1;
+
+DELETE FROM clientes WHERE idCliente = 2;
+DESCRIBE clientes;
+
+-- Utilizando un procedimiento almacenado (Store procedure)
+-- Crear
+DELIMITER //
+CREATE procedure guardarClientes
+(IN nombreCompañia VARCHAR(50), IN nombreContacto VARCHAR(40), IN tituloContacto VARCHAR(40), IN direccion VARCHAR(60), IN ciudad VARCHAR(30), IN codigoPostal VARCHAR(10), IN pais VARCHAR(30), IN telefono VARCHAR(10))
+BEGIN
+	INSERT INTO clientes(
+    nombreCompañia,
+    nombreContacto,
+    tituloContacto,
+    direccion,
+    ciudad,
+    codigoPostal,
+    pais,
+    telefono
+    )
+    VALUES(
+    nombreCompañia,
+    nombreContacto,
+    tituloContacto,
+    direccion,
+    ciudad,
+    codigoPostal,
+    pais,
+    telefono
+    );
+END//
+
+DELIMITER ;
+-- Mandamos llamar el store procedure
+CALL guardarClientes("Costco", "Marieal Martinez Herrera", "Gerente", "Av. Miguel Martinez 198", "Queretaro", "98987", "Mexico", "442321232");
+
+DELIMITER //
+-- Creamos el store procedure editar o actualizar
+CREATE PROCEDURE actualizarClientes
+(IN id INT, IN nombreCompañia VARCHAR(50), IN nombreContacto VARCHAR(40), IN tituloContacto VARCHAR(40), IN direccion VARCHAR(60), IN ciudad VARCHAR(30), IN codigoPostal VARCHAR(10), IN pais VARCHAR(30), IN telefono VARCHAR(10))
+begin
+	UPDATE clientes
+    SET 
+    nombreCompañia = nombreCompañia, 
+    nombreContacto = nombreContacto, 
+    tituloContacto = tituloContacto, 
+    direccion = direccion, 
+    ciudad = ciudad, 
+    codigoPostal = codigoPostal, 
+    pais = pais, 
+    telefono = telefono
+    WHERE idCliente = id;
+end//
+
+DELIMITER ;
+-- Mandamos llamar el store procedure
+CALL actualizarClientes(1, "Soriana", "Andres Perez", "RH", "Dalia 1213A", "Uriangato", "65656", "Mexico", "4421212321");
+
+-- Creando store procedure para eliminar cliente
+DELIMITER //
+CREATE PROCEDURE eliminarCliente
+(IN id int)
+begin
+	DELETE FROM clientes WHERE idCliente = id;
+end//
+
+-- Mandamos llamar el store procedure eliminar
+DELIMITER //
+CALL eliminarCliente(4);
+
+SELECT * FROM clientes;
 
 INSERT INTO empleado (
     apellido, nombre, titulo, fechaNacimiento, contratacion, direccion, ciudad, codigoPostal, telefono, extension

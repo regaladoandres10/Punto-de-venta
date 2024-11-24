@@ -140,7 +140,6 @@ public class CRUDEmpleados
 
         Empleados objEmpleados = new Empleados();
 
-        // Asegúrate de que `conexion` esté inicializada
         Connection con = conexion.conectar();
         String transaccion = "START TRANSACTION;";
         String consulta = "INSERT INTO empleado(nombre, apellido, titulo, fechaNacimiento, Contratacion, direccion, ciudad, codigoPostal, telefono, extension) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";

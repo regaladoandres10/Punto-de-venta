@@ -6,6 +6,7 @@ package Front_end.Formularios;
 
 import Front_end.Formularios.FormEmpleados;
 import Front_end.Formularios.FormProductos;
+import Front_end.Formularios.FormClientes;
 
 /**
  *
@@ -35,8 +36,9 @@ public class Main extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jmVenta = new javax.swing.JMenu();
         jmAdmin = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        mnEmpleados = new javax.swing.JMenuItem();
+        mnProductos = new javax.swing.JMenuItem();
+        mnClientes = new javax.swing.JMenuItem();
         jmReportes = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
 
@@ -78,21 +80,29 @@ public class Main extends javax.swing.JFrame {
 
         jmAdmin.setText("Administración");
 
-        jMenuItem1.setText("Empleados");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        mnEmpleados.setText("Empleados");
+        mnEmpleados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                mnEmpleadosActionPerformed(evt);
             }
         });
-        jmAdmin.add(jMenuItem1);
+        jmAdmin.add(mnEmpleados);
 
-        jMenuItem2.setText("Productos");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        mnProductos.setText("Productos");
+        mnProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                mnProductosActionPerformed(evt);
             }
         });
-        jmAdmin.add(jMenuItem2);
+        jmAdmin.add(mnProductos);
+
+        mnClientes.setText("Clientes");
+        mnClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnClientesActionPerformed(evt);
+            }
+        });
+        jmAdmin.add(mnClientes);
 
         jMenuBar1.add(jmAdmin);
 
@@ -124,18 +134,18 @@ public class Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void mnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnProductosActionPerformed
         FormProductos objFormProductos = new FormProductos();
         dpFormulario.add(objFormProductos);
         objFormProductos.setVisible(true);
         
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_mnProductosActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void mnEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnEmpleadosActionPerformed
         FormEmpleados objFormEmpleados = new FormEmpleados();
         dpFormulario.add(objFormEmpleados);
         objFormEmpleados.setVisible(true);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_mnEmpleadosActionPerformed
 
     private void jmVentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jmVentaMouseClicked
         FormVentas objFormVentas = new FormVentas();
@@ -152,6 +162,12 @@ public class Main extends javax.swing.JFrame {
         act.setVisible(true);
 
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void mnClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnClientesActionPerformed
+        FormClientes objFormClientes = new FormClientes();
+        dpFormulario.add(objFormClientes);
+        objFormClientes.setVisible(true);
+    }//GEN-LAST:event_mnClientesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -192,11 +208,12 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel Imagen;
     private javax.swing.JDesktopPane dpFormulario;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenu jmAdmin;
     private javax.swing.JMenu jmReportes;
     private javax.swing.JMenu jmVenta;
+    private javax.swing.JMenuItem mnClientes;
+    private javax.swing.JMenuItem mnEmpleados;
+    private javax.swing.JMenuItem mnProductos;
     // End of variables declaration//GEN-END:variables
 }
