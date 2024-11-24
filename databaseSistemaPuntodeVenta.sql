@@ -55,10 +55,13 @@ CREATE TABLE venta (
 	idorden INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     idempleado INT NOT NULL,
     FOREIGN KEY (idempleado) REFERENCES empleado(idempleado),
+    idCliente INT NOT NULL,
+    FOREIGN KEY (idCliente) references clientes(idCliente),
     fecha DATETIME,
     total DECIMAL(19,4)
     
 );
+
 -- Ahora puedes crear la tabla 'detallesVenta' sin problemas
 CREATE TABLE detallesVenta (
     precioUnitario DECIMAL(19,4),
@@ -68,6 +71,8 @@ CREATE TABLE detallesVenta (
     idorden INT NOT NULL,
     FOREIGN KEY (idorden) REFERENCES venta(idorden)
 );
+
+
 
 CREATE TABLE clientes(
 	idCliente INT NOT NULL primary key auto_increment,
@@ -152,7 +157,7 @@ begin
 end//
 
 -- Mandamos llamar el store procedure eliminar
-DELIMITER //
+DELIMITER ;
 CALL eliminarCliente(4);
 
 SELECT * FROM clientes;
@@ -244,3 +249,16 @@ VALUES
 ('Chuleta de Cerdo', '1234567890177', 13, 1, 4.50, 15, 3, 1),
 ('Jamón Virginia', '2345678901288', 13, 1, 3.80, 50, 10, 5),
 ('Salchicha San Rafael', '3456789012399', 13, 1, 2.80, 60, 12, 8);
+
+INSERT INTO clientes (nombreCompañia, nombreContacto, tituloContacto, direccion, ciudad, codigoPostal, pais, telefono)
+VALUES
+('Supermercado El Buen Ahorro', 'Carlos Martínez', 'Gerente de Tienda', 'Av. Las Palmas 123', 'Ciudad de México', '01234', 'México', '5512345678'),
+('Mercado Familiar', 'Ana López', 'Encargada de Ventas', 'Calle Central 456', 'Guadalajara', '44123', 'México', '3312345678'),
+('Abarrotes La Esquina', 'Pedro Ramírez', 'Supervisor', 'Colonia Centro 789', 'Monterrey', '64056', 'México', '8112345678'),
+('Supermercado Frescura', 'Laura García', 'Administradora', 'Blvd. Reforma 101', 'Puebla', '72089', 'México', '2212345678'),
+('MegaSuper', 'Diego Ortega', 'Subgerente', 'Calle Independencia 202', 'Tijuana', '22045', 'México', '6641234567'),
+('Hipermercado La Económica', 'María Hernández', 'Gerente General', 'Av. Principal 303', 'León', '37067', 'México', '4771234567'),
+('Supermercado Mi Tiendita', 'Andrea Torres', 'Jefa de Sucursal', 'Plaza Comercial 404', 'Querétaro', '76090', 'México', '4421234567'),
+('Abarrotes y Más', 'Luis Fernández', 'Jefe de Compras', 'Zona Norte 505', 'Mérida', '97045', 'México', '9991234567'),
+('Supermercado El Surtidor', 'Sofía Pérez', 'Asesora de Ventas', 'Zona Sur 606', 'Cancún', '77523', 'México', '9981234567'),
+('Tienda Todo Fresco', 'Juan Sánchez', 'Coordinador de Inventario', 'Carretera Nacional 707', 'Ciudad de México', '01567', 'México', '5551234567');
