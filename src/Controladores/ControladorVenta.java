@@ -4,6 +4,7 @@
  */
 package Controladores;
 
+import Conexion.Conexion;
 import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +16,12 @@ import java.sql.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 /**
  *
@@ -22,10 +29,9 @@ import java.time.format.DateTimeFormatter;
  */
 public class ControladorVenta {
     
-    
     public void buscarProducto(JTextField nombreProducto, JTable tablaProductos){
     
-    Conexion.Conexion objetoConexion = new Conexion.Conexion();
+    Conexion objetoConexion = new Conexion();
     Models.Productos objetoProducto = new Models.Productos();
     
     DefaultTableModel modelo = new DefaultTableModel();
@@ -153,12 +159,48 @@ public class ControladorVenta {
         IVA.setText(String.valueOf(totalIva));
     }
     
-    public void hacerVenta(JTable tablaResumen, JLabel total) throws SQLException{
+    public void generarVentasAleatorias(JTextField cantVentas) throws SQLException
+    {
+        Conexion objetoConexion = new Conexion();
+        String transaction = "START TRANSACTION";
+        
+        String consulta = "CALL spVentasAleatorias(?);";
+        
+        String comm = "COMMIT;";
+        String roll = "ROLLBACK;";
+        
+        try
+        {
+            PreparedStatement psVentaAleatoria = objetoConexion.conectar().prepareCall(consulta);
+            PreparedStatement tr = objetoConexion.conectar().prepareStatement(transaction);
+            PreparedStatement com = objetoConexion.conectar().prepareStatement(comm);
+            
+            tr.execute();
+            psVentaAleatoria.setInt(1, Integer.parseInt(cantVentas.getText()));
+            psVentaAleatoria.execute();
+            com.execute();
+            
+            JOptionPane.showMessageDialog(null, "Las ventas aleatorias se realizaron con exito");
+        }
+        catch(Exception e)
+        {
+            PreparedStatement rll = objetoConexion.conectar().prepareStatement(roll);
+            JOptionPane.showMessageDialog(null, "Error al realizar la venta aleatoria: "+e.toString());
+            rll.execute();
+        }
+        finally
+        {
+            objetoConexion.closeConexion();
+        }
+        
+    }
     
-        Conexion.Conexion objetoConexion = new Conexion.Conexion();
+    public void hacerVenta(JTable tablaResumen, JTextField idCliente, JLabel total) throws SQLException{
+    
+        Conexion objetoConexion = new Conexion();
         String transaccion = "START TRANSACTION;";
         
-        String venta = "insert into venta (idEmpleado,fecha,total) values(1,now(),?);";
+        String venta = "insert into venta (idEmpleado,idCliente,fecha,total) values(1,?,now(),?);";
         String consulta = "insert into detallesVenta(precioUnitario,cantidad,codigo,idorden)values (?,?,?,(select MAX(idorden) from venta));";
         String consultaStock = "UPDATE producto set producto.unidadesEnAlmacen = unidadesEnAlmacen - ? where producto.codigo= ?;";
         
@@ -176,14 +218,12 @@ public class ControladorVenta {
             int filas = tablaResumen.getRowCount();
             
             tr.execute();
-            psVenta.setDouble(1,Double.parseDouble(total.getText()));
+            psVenta.setInt(1, Integer.parseInt(idCliente.getText()));
+            psVenta.setDouble(2,Double.parseDouble(total.getText()));
             psVenta.execute();
             com.execute();
             
             for (int i = 0; i < filas; i++) {
-                
-                
-                
                 
                 String codigo1 = tablaResumen.getValueAt(i, 0).toString();
                 double precio = Double.parseDouble(tablaResumen.getValueAt(i, 2).toString());
@@ -217,8 +257,9 @@ public class ControladorVenta {
         }
     }
     
-    public void limpliar(JTextField buscador,JTable productos, JTextField codigo, JTextField nombre, JTextField precio , JTextField stock, JTextField precioVenta, JTextField cantidad,JTable tablaResumen, JLabel IVA, JLabel total){
+    public void limpliar(JTextField buscador,JTable productos, JTextField idCliente, JTextField codigo, JTextField nombre, JTextField precio , JTextField stock, JTextField precioVenta, JTextField cantidad,JTable tablaResumen, JLabel IVA, JLabel total){
    
+        idCliente.setText("");
         codigo.setText("");
         nombre.setText("");
         precio.setText("");
@@ -291,7 +332,7 @@ public class ControladorVenta {
     
     private String[] obtenerEmpleado(int idEmpleado){
         String[] empleado = new String[2];
-        Conexion.Conexion objetoConexion =new Conexion.Conexion();
+        Conexion objetoConexion = new Conexion();
         try{
             String consulta= "SELECT nombre,apellido FROM Empleado WHERE idempleado= ?";
             PreparedStatement ps = objetoConexion.conectar().prepareStatement(consulta);
@@ -303,10 +344,13 @@ public class ControladorVenta {
             }
         
         }catch (SQLException e){
-            JOptionPane.showMessageDialog(null,"Error al obtener empleados"+ e.toString());
+            JOptionPane.showMessageDialog(null,"Error al obtener empleado"+ e.toString());
         } finally {
         objetoConexion.closeConexion();
     } return empleado;
         
     }
+    
+    
+    
 }

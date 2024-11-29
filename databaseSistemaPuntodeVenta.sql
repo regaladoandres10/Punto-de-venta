@@ -5,14 +5,22 @@ CREATE USER 'Admin'@'localhost' identified BY '1234';
 
 GRANT SELECT, UPDATE, DELETE, INSERT ON puntoVenta.* TO 'Admin'@'localhost';
 
+SHOW TABLES;
+
+
+DROP TABLE login;
 CREATE TABLE login
 (
 	id INT NOT NULL PRIMARY KEY auto_increment,
-    user VARCHAR(100) NOT NULL,
-    password VARCHAR(100) NOT NULL
+    user VARCHAR(100) NOT NULL unique,
+    password VARCHAR(100) NOT NULL,
+    idempleado INT NOT NULL,
+    FOREIGN KEY (idempleado) REFERENCES empleado(idempleado)
 );
 
-INSERT INTO login VALUES(null, 'Admin', sha('1234'));
+INSERT INTO login(user, password, idEmpleado) VALUES(null, 'Juan', sha('1234'), 1);
+
+SELECT * FROM empleado;
 
 -- SELECT * FROM login;
 -- SELECT * FROM login WHERE user = 'Admin' AND password = sha('1234');
@@ -48,7 +56,20 @@ CREATE TABLE empleado (
     codigoPostal VARCHAR(10),
     telefono VARCHAR(10),
     extension VARCHAR(3)
-    
+);
+
+
+
+CREATE TABLE clientes(
+	idCliente INT NOT NULL primary key auto_increment,
+    nombreCompañia VARCHAR(50) NOT NULL,
+    nombreContacto VARCHAR(40),
+    tituloContacto VARCHAR(40),
+    direccion VARCHAR(60),
+    ciudad VARCHAR(30) NOT NULL,
+    codigoPostal VARCHAR(10) NOT NULL,
+    pais VARCHAR(30),
+    telefono VARCHAR(10)
 );
 
 CREATE TABLE venta (
@@ -70,20 +91,6 @@ CREATE TABLE detallesVenta (
     FOREIGN KEY (codigo) REFERENCES producto(codigo),
     idorden INT NOT NULL,
     FOREIGN KEY (idorden) REFERENCES venta(idorden)
-);
-
-
-
-CREATE TABLE clientes(
-	idCliente INT NOT NULL primary key auto_increment,
-    nombreCompañia VARCHAR(50) NOT NULL,
-    nombreContacto VARCHAR(40),
-    tituloContacto VARCHAR(40),
-    direccion VARCHAR(60),
-    ciudad VARCHAR(30) NOT NULL,
-    codigoPostal VARCHAR(10) NOT NULL,
-    pais VARCHAR(30),
-    telefono VARCHAR(10)
 );
 
 INSERT INTO clientes(nombreCompañia, nombreContacto, tituloContacto, direccion, ciudad, codigoPostal, pais, telefono)VALUES("Soriana", "Juan Perez", "Jefe", "Main Street 1234", "Uriangato", "34980", "Mexico", "4421232312");
@@ -160,7 +167,7 @@ end//
 DELIMITER ;
 CALL eliminarCliente(4);
 
-SELECT * FROM clientes;
+SELECT * FROM empleado;
 
 INSERT INTO empleado (
     apellido, nombre, titulo, fechaNacimiento, contratacion, direccion, ciudad, codigoPostal, telefono, extension
@@ -262,3 +269,110 @@ VALUES
 ('Abarrotes y Más', 'Luis Fernández', 'Jefe de Compras', 'Zona Norte 505', 'Mérida', '97045', 'México', '9991234567'),
 ('Supermercado El Surtidor', 'Sofía Pérez', 'Asesora de Ventas', 'Zona Sur 606', 'Cancún', '77523', 'México', '9981234567'),
 ('Tienda Todo Fresco', 'Juan Sánchez', 'Coordinador de Inventario', 'Carretera Nacional 707', 'Ciudad de México', '01567', 'México', '5551234567');
+
+select * from clientes;
+
+DELIMITER //
+
+CREATE TRIGGER validarProducto
+BEFORE INSERT ON producto
+FOR EACH ROW
+BEGIN
+    -- Validación a: El precio no debe ser negativo
+    IF NEW.precioUnitario < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El precio de un producto no puede ser negativo.';
+    END IF;
+
+    -- Validación b: El nombre no debe ser vacío o solo espacios en blanco
+    IF TRIM(NEW.nombre) = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El nombre de un producto no puede estar vacío o contener solo espacios en blanco.';
+    END IF;
+
+    -- Validación c: Código de barras debe ser NULL o tener entre 8 y 20 caracteres
+    IF NEW.codigo IS NOT NULL AND (CHAR_LENGTH(NEW.codigo) < 8 OR CHAR_LENGTH(NEW.codigo) > 20) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El código de barras debe tener entre 8 y 20 caracteres o ser NULL.';
+    END IF;
+END//
+
+DELIMITER ;
+
+insert into producto values(101,'ok','1234565675',3,1,1,100,1,4);
+
+drop procedure spVentasAleatorias;
+select * from detallesventa;
+select * from venta;
+-- drop database punto0venta;
+call spVentasAleatorias(10);
+SELECT * FROM venta;
+
+delimiter //
+
+create procedure spVentasAleatorias(ventas int)
+begin
+    declare j int default 0;
+    declare i int default 0;
+    declare Idproducto  varchar(20);
+    declare Fecha_venta date;
+    declare Cantidad int;
+    declare Total decimal(10, 2) default 0;
+    declare Fecha_random date;
+    declare limite int;
+    declare Precio decimal(10, 2);
+    declare idEmpleado int default null;
+    declare Id_venta int;
+    declare idCliente int default null;
+
+    while j < ventas do
+        set Total = 0; -- Reiniciar total de la venta
+        set Limite = greatest(1, floor(1 + (rand() * 5))); -- Número aleatorio de productos por venta
+        set Fecha_random = date_add(curdate(), interval floor(rand() * 365) day);
+
+        -- Seleccionar empleado y cliente aleatorios
+		set idEmpleado = floor(rand()*(select count(idempleado) from empleado)+1);
+        set idCliente = floor(rand()*(select count(idcliente) from clientes)+1);
+
+        -- Mensajes de depuración
+        -- select idEmpleado as 'Empleado seleccionado', idCliente as 'Cliente seleccionado';
+
+        -- Crear la venta
+        insert into venta (idempleado, idcliente, fecha, total)
+        values (idEmpleado, idCliente, Fecha_random, Total);
+
+        -- Obtener el ID de la venta recién insertada
+        set Id_venta = LAST_INSERT_ID();
+
+        -- Insertar detalles de la venta
+        set i = 0;
+        REPEAT
+            -- Seleccionar un producto aleatorio
+            select codigo into Idproducto from producto order by rand() limit 1;
+
+            -- Cantidad aleatoria entre 1 y 60
+            set Cantidad = floor(1 + (rand() * 60));
+
+            -- Obtener precio del producto
+            select precioUnitario into Precio from producto where codigo = Idproducto;
+
+            -- Calcular el total acumulado de la venta
+            set Total = Total + (Cantidad * Precio);
+
+            -- Insertar en detallesVenta
+            insert into detallesVenta (precioUnitario,cantidad,codigo,idorden)
+            values (Precio,Cantidad,Idproducto,Id_venta);
+
+            set i = i + 1;
+        UNTIL i >= Limite
+        END REPEAT;
+
+        -- Actualizar el total en la tabla `venta`
+        update venta set total = Total where idorden = Id_venta;
+
+        -- Incrementar el contador de ventas
+        set j = j + 1;
+    end while;
+end //
+
+delimiter ;
