@@ -50,10 +50,11 @@ public class DaoReporte {
                 
                 while(resAct.next()){
                     int idempleado = resAct.getInt("idempleado");
+                    int idCliente = resAct.getInt("idCliente");
                     Date fecha = resAct.getTimestamp("fecha"); 
                     double total = resAct.getDouble("total");
                     int idventa = resAct.getInt("idorden");
-                    ventas.add(new Venta(idempleado,fecha,total,idventa));
+                    ventas.add(new Venta(idempleado,idCliente,fecha,total,idventa));
                 }
 
             //Cerrar la conexion 
