@@ -2,6 +2,7 @@
 package Controladores;
 import Conexion.Conexion;
 import Models.Login;
+import Models.UsuarioActivo;
 import Front_end.Formularios.Main;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -41,47 +42,44 @@ public class ControladorLogin
         if (usuario.isEmpty() || contra.isEmpty() || contra.equalsIgnoreCase("") || usuario.equalsIgnoreCase("Ingrese su nombre de usuario...") || contra.equalsIgnoreCase("********")) 
         {
             JOptionPane.showMessageDialog(null, "Por favor ingrese su nombre de usuario y contraseña.", "ERROR", JOptionPane.ERROR_MESSAGE);
-            return; // Salir si los campos están vacíos
+            return; //Salir si los campos están vacíos
         }
         
         //Creamos la conexion a la BD
         Conexion objConexion = new Conexion();
+        String sql = "SELECT * FROM login WHERE user = ? AND password = SHA(?);";
         
-        Login objLogin = new Login();
-        
-        //Creamos la consulta
-        
-        String sql = "SELECT * FROM login WHERE user = '"+usuario+"' AND password = sha('"+contra+"');";
-        
-        try
+        try (Connection con = objConexion.conectar(); 
+         PreparedStatement ps = con.prepareStatement(sql)) 
         {
-            //Creando la conexión con la base de datos
-            Statement st = objConexion.conectar().createStatement();
-            
-            //Ejecutamos la consulta
-            ResultSet rs = st.executeQuery(sql);
-            
-            
-            if(rs.next())
-            {
-                objConexion.conectar();
-                JOptionPane.showMessageDialog(null, "¡Bienvenido " + usuario + "!");
+        
+            ps.setString(1, usuario);
+            ps.setString(2, contra);
 
-                Main pantallaPrincipal = new Main();
-                pantallaPrincipal.setVisible(true);
-
-                // Cierra la ventana actual
-                ventanaActual.dispose();
-            }
-            else
+            try (ResultSet rs = ps.executeQuery()) 
             {
-                // Usuario o contraseña incorrectos
-                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                if (rs.next()) 
+                {
+                    // Almacena los datos del usuario en UsuarioActivo
+                    UsuarioActivo.setId(rs.getInt("id"));
+                    UsuarioActivo.setUser(rs.getString("user"));
+                    UsuarioActivo.setIdEmpleado(rs.getInt("idempleado"));
+
+                    JOptionPane.showMessageDialog(null, "¡Bienvenido " + usuario + "!");
+                    Main pantallaPrincipal = new Main();
+                    pantallaPrincipal.setVisible(true);
+
+                    ventanaActual.dispose();
+                }
+                else 
+                {
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        }
-        catch(Exception e)
+        } 
+        catch (Exception e) 
         {
-            JOptionPane.showMessageDialog(null,"Error: " +e);
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }
     
@@ -91,7 +89,7 @@ public class ControladorLogin
         
         Connection con = conexion.conectar();
         String transaction = "START TRANSACTION";
-        String consulta = "INSERT INTO login(user, password, idEmpleado) VALUES(?, sha(?), ?);";
+        String consulta = "INSERT INTO login(user, password, idempleado) VALUES(?, sha(?), ?);";
         String commit = "COMMIT";
         String roll = "ROLLBACK";
         
@@ -101,6 +99,7 @@ public class ControladorLogin
         {
             objLogin.setUser(usuario.getText());
             objLogin.setPassword(contra.getText());
+            objLogin.setIdEmpleado(Integer.parseInt(id.getText()));
             
             ps = con.prepareStatement(consulta);
             
@@ -131,5 +130,116 @@ public class ControladorLogin
         }
     }
     
+    public void modificarUsuario(JTextField id, JTextField usuario, JTextField contra, JTextField idEmpleado) throws SQLException {
+    Login objLogin = new Login();
+
+    Connection con = conexion.conectar();
+    String transaction = "START TRANSACTION";
+    String consulta = "UPDATE login SET user = ?, password = SHA(?), idempleado = ? WHERE id = ?;";
+    String commit = "COMMIT";
+    String roll = "ROLLBACK";
+
+    try 
+    {
+        //Validar campos de entrada
+        if (id.getText().isEmpty() || idEmpleado.getText().isEmpty()) 
+        {
+            JOptionPane.showMessageDialog(null, "Los campos ID e IDEmpleado no pueden estar vacíos.");
+            return;
+        }
+
+        //Validar si los valores son números
+        try 
+        {
+            objLogin.setId(Integer.parseInt(id.getText()));
+            objLogin.setIdEmpleado(Integer.parseInt(idEmpleado.getText()));
+        } 
+        catch (NumberFormatException ex) 
+        {
+            JOptionPane.showMessageDialog(null, "Los campos ID e IDEmpleado deben ser números válidos.");
+            return;
+        }
+
+        objLogin.setUser(usuario.getText());
+        objLogin.setPassword(contra.getText());
+
+        ps = con.prepareStatement(consulta);
+
+        ps.setString(1, objLogin.getUser());
+        ps.setString(2, objLogin.getPassword());
+        ps.setInt(3, objLogin.getIdEmpleado());
+        ps.setInt(4, objLogin.getId());
+
+        tr = con.prepareStatement(transaction);
+        com = con.prepareStatement(commit);
+        rll = con.prepareStatement(roll);
+
+        tr.execute();
+        ps.executeUpdate();
+        com.execute();
+
+        JOptionPane.showMessageDialog(null, "Usuario modificado con éxito");
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, "Error al modificar el usuario: " + e.toString());
+            rll.execute();
+        }
+        finally 
+        {
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        }
+    }
+
+    
+    public void limpiarCamposUsuarios(JTextField id, JTextField usuario, JTextField contra, JTextField idEmpleado)
+    {
+        id.setText("");
+        usuario.setText("");
+        contra.setText("");
+        idEmpleado.setText("");
+    }
+    
+    public void borrarUsuario(JTextField id) throws SQLException
+    {
+        Login objLogin = new Login();
+        
+        Connection con = conexion.conectar();
+        String transaction = "START TRANSACTION";
+        String consulta = "DELETE FROM login WHERE id = ?;";
+        String commit = "COMMIT";
+        String roll = "ROLLBACK";
+        
+        try
+        {
+            objLogin.setId(Integer.parseInt(id.getText()));
+            ps = con.prepareStatement(consulta);
+            
+            ps.setInt(1, objLogin.getId());
+            
+            tr = con.prepareStatement(transaction);
+            com = con.prepareStatement(commit);
+            rll = con.prepareStatement(roll);
+            
+            //Ejecutar las insercciones
+            tr.execute();
+            ps.executeUpdate();
+            com.execute();
+            
+            JOptionPane.showMessageDialog(null, "Usuario borrado con exito");
+            
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Error al borrar el usuario: " + e.toString());
+            rll.execute();
+        }
+        finally
+        {
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        }
+    }
     
 }

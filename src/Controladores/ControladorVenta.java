@@ -5,6 +5,7 @@
 package Controladores;
 
 import Conexion.Conexion;
+import Models.UsuarioActivo;
 import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,7 +28,58 @@ import java.sql.Statement;
  *
  * @author leoch
  */
-public class ControladorVenta {
+public class ControladorVenta 
+{
+    Conexion conexion;
+    PreparedStatement ps;
+    ResultSet rs;
+    
+    public ControladorVenta() 
+    {
+        this.conexion = new Conexion();
+    }
+    public void mostrarDatosEmpleado(JLabel empleado) throws SQLException
+    {
+        int idEmpleado = UsuarioActivo.getIdEmpleado();
+        Connection con = conexion.conectar();
+        String sql = "SELECT nombre, apellido FROM empleado WHERE idempleado = ?;";
+        
+        ps = null;
+        try
+        {
+            
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idEmpleado);
+            
+            rs = ps.executeQuery();
+            
+            //Buscar el empleado en la BD
+            if (rs.next()) 
+            {
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+
+                //Mostrar el resultado en el JLabel
+                empleado.setText(nombre + " " + apellido);
+            } 
+            else 
+            {
+                empleado.setText("Empleado no encontrado.");
+            }
+ 
+        }
+        catch(Exception e)
+        {
+            empleado.setText("Error al obtener los datos: " + e.getMessage());
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        }
+    }
     
     public void buscarProducto(JTextField nombreProducto, JTable tablaProductos){
     
@@ -249,7 +301,7 @@ public class ControladorVenta {
             JOptionPane.showMessageDialog(null, "La compra se ha realizado con exito");
         } catch (Exception e) {
             PreparedStatement rll = objetoConexion.conectar().prepareStatement(roll);
-            JOptionPane.showMessageDialog(null, "Eror al realizar la venta "+e.toString());
+            JOptionPane.showMessageDialog(null, "Error al realizar la venta "+e.toString());
             rll.execute();
         } finally {
             
@@ -257,7 +309,7 @@ public class ControladorVenta {
         }
     }
     
-    public void limpliar(JTextField buscador,JTable productos, JTextField idCliente, JTextField codigo, JTextField nombre, JTextField precio , JTextField stock, JTextField precioVenta, JTextField cantidad,JTable tablaResumen, JLabel IVA, JLabel total){
+    public void limpliar(JTextField buscador,JTable productos, JTextField idCliente, JTextField codigo, JTextField nombre, JTextField precio , JTextField stock, JTextField precioVenta, JTextField cantidad,JTable tablaResumen, JLabel IVA, JLabel total, JTextField ventaAleatoria){
    
         idCliente.setText("");
         codigo.setText("");
@@ -270,6 +322,7 @@ public class ControladorVenta {
         buscador.requestFocus();
         IVA.setText("");
         total.setText("");
+        ventaAleatoria.setText("");
         
         DefaultTableModel modeloProductos = (DefaultTableModel) productos.getModel();
         modeloProductos.setRowCount(0);

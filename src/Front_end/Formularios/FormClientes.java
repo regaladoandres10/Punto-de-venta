@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -947,9 +948,29 @@ public class FormClientes extends javax.swing.JInternalFrame {
     private void btnEliminarClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarClienteMouseClicked
         CRUDClientes clientes = new CRUDClientes();
         try {
-            clientes.borrarCliente(txtIdCliente);
-            clientes.mostrarClientes(tbClientes);
-            clientes.limpiarCampos(txtIdCliente, txtNombreCompa, txtNombre, txtTitulo, txtDireccion, txtCiudad, txtCP, txtPais, txtTelefono1);
+            
+            int opcion = JOptionPane.showConfirmDialog
+            (
+            null, 
+            "¿Estás seguro de que deseas eliminar este cliente?", 
+            "Confirmar Eliminación", 
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+            );
+            
+            // Verifica la respuesta del usuario
+            if (opcion == JOptionPane.YES_OPTION) 
+            {
+                clientes.borrarCliente(txtIdCliente);
+                clientes.mostrarClientes(tbClientes);
+                clientes.limpiarCampos(txtIdCliente, txtNombreCompa, txtNombre, txtTitulo, txtDireccion, txtCiudad, txtCP, txtPais, txtTelefono1);
+                
+            } else 
+            {
+                JOptionPane.showMessageDialog(null, "Operacion cancelada");
+            }
+            
+            
             
         } catch (SQLException ex) {
             Logger.getLogger(FormClientes.class.getName()).log(Level.SEVERE, null, ex);
