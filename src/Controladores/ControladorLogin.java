@@ -4,14 +4,12 @@ import Conexion.Conexion;
 import Models.Login;
 import Front_end.Formularios.Main;
 import com.mysql.jdbc.PreparedStatement;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 
 /**
