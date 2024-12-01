@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -539,9 +540,29 @@ public class FormProductos extends javax.swing.JInternalFrame {
     private void jLabel15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MouseClicked
         CRUDProductos productos = new CRUDProductos();
         try {
-            productos.borrarProductos(txtIdProducto);
-            productos.mostrarProductos(tbProductos);
-            productos.limpiarCampos(txtIdProducto, txtNombre, txtCodigo, txtIdCategoria, txtCantidad, txtPrecio, txtUnidadAlmacen, txtUnidadesOrden, txtNivelReorden);
+            
+            int opcion = JOptionPane.showConfirmDialog
+            (
+            null, 
+            "¿Estás seguro de que deseas eliminar este producto?", 
+            "Confirmar Eliminación", 
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+            );
+            
+            // Verifica la respuesta del usuario
+            if (opcion == JOptionPane.YES_OPTION) 
+            {
+                productos.borrarProductos(txtIdProducto);
+                productos.mostrarProductos(tbProductos);
+                productos.limpiarCampos(txtIdProducto, txtNombre, txtCodigo, txtIdCategoria, txtCantidad, txtPrecio, txtUnidadAlmacen, txtUnidadesOrden, txtNivelReorden);
+                
+            } else 
+            {
+                JOptionPane.showMessageDialog(null, "Operacion cancelada");
+            }
+            
+            
         } catch (SQLException ex) {
             Logger.getLogger(FormProductos.class.getName()).log(Level.SEVERE, null, ex);
         }

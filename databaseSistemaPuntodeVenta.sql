@@ -5,44 +5,11 @@ CREATE USER 'Admin'@'localhost' identified BY '1234';
 
 GRANT SELECT, UPDATE, DELETE, INSERT ON puntoVenta.* TO 'Admin'@'localhost';
 
-SHOW TABLES;
+SHOW tables;
 
-
-DROP TABLE login;
-CREATE TABLE login
-(
-	id INT NOT NULL PRIMARY KEY auto_increment,
-    user VARCHAR(100) NOT NULL unique,
-    password VARCHAR(100) NOT NULL,
-    idempleado INT NOT NULL,
-    FOREIGN KEY (idempleado) REFERENCES empleado(idempleado)
-);
-
-INSERT INTO login(user, password, idEmpleado) VALUES(null, 'Juan', sha('1234'), 1);
-
+SELECT * FROM venta;
 SELECT * FROM empleado;
-
--- SELECT * FROM login;
--- SELECT * FROM login WHERE user = 'Admin' AND password = sha('1234');
-
-CREATE TABLE categoria (
-	idcategoria INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(50),
-    descripcion TEXT
-);
-
-CREATE TABLE producto (
-	idproducto INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(50),
-    codigo VARCHAR(13) UNIQUE,
-    idcategoria INT NOT NULL,
-    FOREIGN KEY (idcategoria) REFERENCES categoria(idcategoria),
-    cantidadPorUnidad INT,
-    precioUnitario DECIMAL(19,4),
-    unidadesEnAlmacen INT,
-    unidadesEnOrden INT,
-    nivelDeReorden INT
-);
+SELECT * FROM login;
 
 CREATE TABLE empleado (
 	idempleado INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -58,7 +25,33 @@ CREATE TABLE empleado (
     extension VARCHAR(3)
 );
 
+CREATE TABLE login
+(
+	id INT NOT NULL PRIMARY KEY auto_increment,
+    user VARCHAR(100) NOT NULL unique,
+    password VARCHAR(100) NOT NULL,
+    idempleado INT NOT NULL,
+    FOREIGN KEY (idempleado) REFERENCES empleado(idempleado) ON DELETE CASCADE
+);
 
+CREATE TABLE categoria (
+	idcategoria INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50),
+    descripcion TEXT
+);
+
+CREATE TABLE producto (
+	idproducto INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50),
+    codigo VARCHAR(13) UNIQUE,
+    idcategoria INT NOT NULL,
+    FOREIGN KEY (idcategoria) REFERENCES categoria(idcategoria) ON DELETE CASCADE,
+    cantidadPorUnidad INT,
+    precioUnitario DECIMAL(19,4),
+    unidadesEnAlmacen INT,
+    unidadesEnOrden INT,
+    nivelDeReorden INT
+);
 
 CREATE TABLE clientes(
 	idCliente INT NOT NULL primary key auto_increment,
@@ -75,31 +68,78 @@ CREATE TABLE clientes(
 CREATE TABLE venta (
 	idorden INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     idempleado INT NOT NULL,
-    FOREIGN KEY (idempleado) REFERENCES empleado(idempleado),
+    FOREIGN KEY (idempleado) REFERENCES empleado(idempleado) ON DELETE CASCADE,
     idCliente INT NOT NULL,
-    FOREIGN KEY (idCliente) references clientes(idCliente),
+    FOREIGN KEY (idCliente) references clientes(idCliente) ON DELETE CASCADE,
     fecha DATETIME,
     total DECIMAL(19,4)
-    
 );
 
+DESCRIBE venta;
+
 -- Ahora puedes crear la tabla 'detallesVenta' sin problemas
+
 CREATE TABLE detallesVenta (
     precioUnitario DECIMAL(19,4),
     cantidad INT,
     codigo VARCHAR(13) NOT NULL,
-    FOREIGN KEY (codigo) REFERENCES producto(codigo),
+    FOREIGN KEY (codigo) REFERENCES producto(codigo) ON DELETE CASCADE,
     idorden INT NOT NULL,
-    FOREIGN KEY (idorden) REFERENCES venta(idorden)
+    FOREIGN KEY (idorden) REFERENCES venta(idorden) ON DELETE CASCADE
 );
 
-INSERT INTO clientes(nombreCompañia, nombreContacto, tituloContacto, direccion, ciudad, codigoPostal, pais, telefono)VALUES("Soriana", "Juan Perez", "Jefe", "Main Street 1234", "Uriangato", "34980", "Mexico", "4421232312");
-SELECT * FROM clientes;
+CREATE TABLE auditoria(
+	
+    idAuditoria INT NOT NULL PRIMARY KEY auto_increment,
+    idEmpleado INT,
+    fechaCambio datetime,
+    cambio ENUM('INSERT', 'UPDATE', 'DELETE'),
+    fechaCambio datetime not null default current_timestamp
+    
+);
 
-UPDATE clientes SET nombreCompañia = "Bodega", nombreContacto = "Maria", tituloContacto = "Gerente", direccion = "Main Street 20", ciudad = "Moroleon", codigoPostal = "38987", pais = "El Salvador", telefono = "2321231232" WHERE idCliente = 1;
+SELECT * FROM auditoria;
 
-DELETE FROM clientes WHERE idCliente = 2;
-DESCRIBE clientes;
+-- Crear trigger INSERT de venas
+DELIMITER //
+CREATE TRIGGER venta_insert
+AFTER INSERT ON venta
+FOR EACH ROW
+BEGIN
+	INSERT INTO auditoria (idEmpleado, fecha, cambio) VALUES(NEW.idempleado, NEW.fecha, 'INSERT');
+END//
+DELIMITER ;
+
+-- Auditoria update venta
+DELIMITER //
+CREATE TRIGGER venta_UPDATE
+AFTER UPDATE ON venta
+FOR EACH ROW
+BEGIN
+	INSERT INTO auditoria (idEmpleado, fecha, cambio) VALUES(NEW.idempleado, OLD.fecha, 'UPDATE');
+END//
+DELIMITER ;
+-- Auditoria delete venta
+DELIMITER //
+CREATE TRIGGER venta_DELETE
+AFTER UPDATE ON venta
+FOR EACH ROW
+BEGIN
+	INSERT INTO auditoria (idEmpleado, fecha, cambio) VALUES(NEW.idempleado, OLD.fecha, 'DELETE');
+END//
+DELIMITER ;
+
+SELECT * FROM login;
+SELECT * FROM venta;
+
+INSERT INTO venta (idempleado, idCliente, fecha, total) 
+VALUES (2, 6, NOW(), 1);
+
+UPDATE venta SET idCliente = 6 WHERE idorden = 19;
+
+DELETE FROM venta WHERE idorden = 19;
+
+SELECT * FROM 
 
 -- Utilizando un procedimiento almacenado (Store procedure)
 -- Crear
@@ -168,6 +208,9 @@ DELIMITER ;
 CALL eliminarCliente(4);
 
 SELECT * FROM empleado;
+
+INSERT INTO empleado (apellido, nombre, titulo, fechaNacimiento, contratacion, direccion, ciudad, codigoPostal, telefono, extension)
+VALUES ('', 'Admin', 'Administrador', '1990-04-20', '2023-01-15', 'Calle Principal A', 'Ciudad D', '02345', '5351234567', '342');
 
 INSERT INTO empleado (
     apellido, nombre, titulo, fechaNacimiento, contratacion, direccion, ciudad, codigoPostal, telefono, extension

@@ -31,6 +31,13 @@ public class FormVentas extends javax.swing.JInternalFrame {
     public FormVentas() {
         initComponents();
         
+        ControladorVenta objVenta = new ControladorVenta();
+        try {
+            objVenta.mostrarDatosEmpleado(lblMostrarEmpleado);
+        } catch (SQLException ex) {
+            Logger.getLogger(FormVentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         tbProductos.setRowHeight(25);
         tableVentas.setRowHeight(25);
         
@@ -230,6 +237,7 @@ public class FormVentas extends javax.swing.JInternalFrame {
         jLabel18.setText("Empleado");
 
         lblMostrarEmpleado.setFont(new java.awt.Font("Roboto Black", 1, 14)); // NOI18N
+        lblMostrarEmpleado.setForeground(new java.awt.Color(249, 249, 249));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -255,13 +263,14 @@ public class FormVentas extends javax.swing.JInternalFrame {
                                 .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(47, 47, 47)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel18)
                                 .addGap(18, 18, 18)
-                                .addComponent(lblMostrarEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)))
+                                .addComponent(lblMostrarEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -273,13 +282,14 @@ public class FormVentas extends javax.swing.JInternalFrame {
                     .addComponent(jLabel16)
                     .addComponent(jLabel17))
                 .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtBuscarProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18)
-                    .addComponent(lblMostrarEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblMostrarEmpleado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(txtBuscarProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11)
+                        .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel18)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -664,12 +674,12 @@ public class FormVentas extends javax.swing.JInternalFrame {
             }
         });
 
-        btnGenerarVentasAleatorias.setBackground(new java.awt.Color(33, 169, 66));
+        btnGenerarVentasAleatorias.setBackground(new java.awt.Color(255, 112, 36));
 
         btnVentaAleatoria.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         btnVentaAleatoria.setForeground(new java.awt.Color(255, 255, 255));
         btnVentaAleatoria.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnVentaAleatoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/guardar.png"))); // NOI18N
+        btnVentaAleatoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/aleatorio.png"))); // NOI18N
         btnVentaAleatoria.setText("VENTA ALEATORIA");
         btnVentaAleatoria.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnVentaAleatoria.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -793,7 +803,7 @@ public class FormVentas extends javax.swing.JInternalFrame {
         Controladores.ControladorVenta objetoVenta = new ControladorVenta();
         objetoVenta.hacerVenta(tableVentas, txtIdCliente, lblTOTAL);
         objetoVenta.generarTicket(tableVentas, lblTOTAL, lblIVA, HIDE_ON_CLOSE);
-        objetoVenta.limpliar(txtSCodigo, tbProductos,txtIdCliente, txtSCodigo, txtSNombre, txtSPrecio, txtSStock, txtPrecioVenta, txtCantidad, tableVentas, lblIVA, lblTOTAL);
+        objetoVenta.limpliar(txtSCodigo, tbProductos,txtIdCliente, txtSCodigo, txtSNombre, txtSPrecio, txtSStock, txtPrecioVenta, txtCantidad, tableVentas, lblIVA, lblTOTAL, txtVentasAleatorias);
         
         }catch(SQLException s){
             System.out.println(s.getMessage());
@@ -829,19 +839,19 @@ public class FormVentas extends javax.swing.JInternalFrame {
     private void btnVentaAleatoriaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentaAleatoriaMouseClicked
         ControladorVenta objVenta = new ControladorVenta();
         try {
-            objVenta.generarVentasAleatorias(txtCantidad);
-            objVenta.limpliar(txtSCodigo, tbProductos,txtIdCliente, txtSCodigo, txtSNombre, txtSPrecio, txtSStock, txtPrecioVenta, txtCantidad, tableVentas, lblIVA, lblTOTAL);
+            objVenta.generarVentasAleatorias(txtVentasAleatorias);
+            objVenta.limpliar(txtSCodigo, tbProductos,txtIdCliente, txtSCodigo, txtSNombre, txtSPrecio, txtSStock, txtPrecioVenta, txtCantidad, tableVentas, lblIVA, lblTOTAL, txtVentasAleatorias);
         } catch (SQLException ex) {
             Logger.getLogger(FormVentas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnVentaAleatoriaMouseClicked
 
     private void btnVentaAleatoriaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentaAleatoriaMouseEntered
-        // TODO add your handling code here:
+        btnGenerarVentasAleatorias.setBackground(new Color(255, 151, 36));
     }//GEN-LAST:event_btnVentaAleatoriaMouseEntered
 
     private void btnVentaAleatoriaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentaAleatoriaMouseExited
-        // TODO add your handling code here:
+        btnGenerarVentasAleatorias.setBackground(new Color(255, 112, 36));
     }//GEN-LAST:event_btnVentaAleatoriaMouseExited
 
 
