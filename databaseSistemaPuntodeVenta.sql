@@ -1,15 +1,10 @@
 CREATE DATABASE puntoVenta;
 USE puntoVenta;
 
-CREATE USER 'Admin'@'localhost' identified BY '1234';
+-- CREATE USER 'Admin'@'localhost' identified BY '1234';
 
 GRANT SELECT, UPDATE, DELETE, INSERT ON puntoVenta.* TO 'Admin'@'localhost';
 
-SHOW tables;
-
-SELECT * FROM venta;
-SELECT * FROM empleado;
-SELECT * FROM login;
 
 CREATE TABLE empleado (
 	idempleado INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -24,6 +19,7 @@ CREATE TABLE empleado (
     telefono VARCHAR(10),
     extension VARCHAR(3)
 );
+
 
 CREATE TABLE login
 (
@@ -75,7 +71,6 @@ CREATE TABLE venta (
     total DECIMAL(19,4)
 );
 
-DESCRIBE venta;
 
 -- Ahora puedes crear la tabla 'detallesVenta' sin problemas
 
@@ -92,13 +87,12 @@ CREATE TABLE auditoria(
 	
     idAuditoria INT NOT NULL PRIMARY KEY auto_increment,
     idEmpleado INT,
-    fechaCambio datetime,
+    fecha datetime,
     cambio ENUM('INSERT', 'UPDATE', 'DELETE'),
     fechaCambio datetime not null default current_timestamp
     
 );
 
-SELECT * FROM auditoria;
 
 -- Crear trigger INSERT de venas
 DELIMITER //
@@ -129,17 +123,10 @@ BEGIN
 END//
 DELIMITER ;
 
-SELECT * FROM login;
-SELECT * FROM venta;
 
-INSERT INTO venta (idempleado, idCliente, fecha, total) 
-VALUES (2, 6, NOW(), 1);
 
-UPDATE venta SET idCliente = 6 WHERE idorden = 19;
 
-DELETE FROM venta WHERE idorden = 19;
 
-SELECT * FROM 
 
 -- Utilizando un procedimiento almacenado (Store procedure)
 -- Crear
@@ -207,7 +194,46 @@ end//
 DELIMITER ;
 CALL eliminarCliente(4);
 
-SELECT * FROM empleado;
+
+
+-- Vistas
+-- Reporte por mes
+CREATE VIEW reporteMes AS
+SELECT ven.idOrden, ven.fecha, cli.nombreCompañia AS nombreCompania, concat(emp.nombre," ",emp.apellido) AS empleado, ven.total, count(dv.codigo) AS detalles
+FROM (((venta ven JOIN clientes cli ON ven.idCliente = cli.IdCliente) JOIN empleado emp ON ven.idempleado = emp.idempleado) JOIN detallesventa dv ON ven.idorden = dv.idorden) GROUP BY ven.idorden;
+
+-- Reporte ventas por producto
+CREATE VIEW ventasPorProducto AS
+SELECT concat(emp.nombre," ",emp.apellido) AS Nombre, ven.idorden, prod.nombre AS producto, dv.cantidad, ven.fecha
+FROM(((venta ven JOIN  empleado emp ON ven.idempleado = emp.idempleado) JOIN detallesventa dv ON ven.idorden = dv.idorden)JOIN producto prod ON dv.codigo = prod.codigo);
+
+-- Reporte ventas por empleado
+create view VentasEmpleado as
+SELECT v.idOrden, v.fecha, concat(e.nombre," ",e.apellido) AS empleado, v.total
+FROM venta v  JOIN empleado e ON v.idempleado = e.idempleado ;
+
+
+
+-- Funcion cantidad de productos
+DELIMITER //
+
+CREATE FUNCTION calcularCantidadProductos(folioVenta INT) 
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE totalProductos INT;
+    
+    SELECT SUM(cantidad) INTO totalProductos
+    FROM detallesventa
+    WHERE idorden = folioVenta;
+    
+    RETURN COALESCE(totalProductos, 0);
+END //
+
+DELIMITER ;
+
+
+
 
 INSERT INTO empleado (apellido, nombre, titulo, fechaNacimiento, contratacion, direccion, ciudad, codigoPostal, telefono, extension)
 VALUES ('', 'Admin', 'Administrador', '1990-04-20', '2023-01-15', 'Calle Principal A', 'Ciudad D', '02345', '5351234567', '342');
@@ -343,13 +369,7 @@ END//
 DELIMITER ;
 
 insert into producto values(101,'ok','1234565675',3,1,1,100,1,4);
-
-drop procedure spVentasAleatorias;
-select * from detallesventa;
-select * from venta;
--- drop database punto0venta;
-call spVentasAleatorias(10);
-SELECT * FROM venta;
+insert into login values(null,'Admin',sha('1234'),1);
 
 delimiter //
 
@@ -419,3 +439,5 @@ begin
 end //
 
 delimiter ;
+
+
