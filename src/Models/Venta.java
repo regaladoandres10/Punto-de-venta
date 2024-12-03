@@ -13,22 +13,19 @@ import java.util.Date;
 public class Venta {
     int idempleado;
     int idventa;
+    int idCliente;
     private Date fechaVenta;
     private double importe;
     private double IVA;
     
-    public Venta(int idempleado,Date fecha,double total,int idventa){
+    public Venta(int idempleado,int idCliente, Date fecha,double total,int idventa){
         this.idempleado = idempleado;
+        this.idCliente = idCliente;
         this.idventa = idventa;
         this.fechaVenta = fecha;
         this.importe = total;
         this.IVA = total*0.16;
     }
-    
-    
-    
-    
-  
     
     public double getImporte(){
         return importe;
@@ -61,7 +58,12 @@ public class Venta {
     public void setFechaVenta(Date fechaVenta) {
         this.fechaVenta = fechaVenta;
     }
-    
-    
-    
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
 }
