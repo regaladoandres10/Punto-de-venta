@@ -4,10 +4,6 @@
  */
 package Front_end.Formularios;
 
-import Front_end.Formularios.FormEmpleados;
-import Front_end.Formularios.FormProductos;
-import Front_end.Formularios.FormClientes;
-
 /**
  *
  * @author Andres
